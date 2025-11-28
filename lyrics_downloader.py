@@ -12,29 +12,24 @@ logger = logging.getLogger(__name__)
 class LyricsDownloader:
     def __init__(self):
         self.base_url = "https://lrclib.net/api"
-        # self.supported_extensions = {".opus", ".m4a", ".mp3"}
+        self.supported_extensions = TinyTag.SUPPORTED_FILE_EXTENSIONS
         self.proccessed_songs = 0
 
     def run(self, paths: list[str]):
         for path_str in paths:
             path = Path(path_str)
-            if path.is_dir():
-                for file_path in path.iterdir():
-                    if file_path.is_file():
-                        self.process_song(file_path)
-
-            elif path.is_file():
-                self.process_song(path)
-            else:
-                logger.warning(f"Skipping invalid path or unsupported file: {path}")
-
+            for file_path in path.rglob("*"):
+                if file_path.suffix.lower() not in self.supported_extensions:
+                    logger.warning(f"Unsupported file format {file_path}, skipping.")
+                    continue
+                self.process_song(file_path)
         logger.info(f"Processed {self.proccessed_songs} songs.")
 
     def process_song(self, file_path: Path):
         try:
             audio = TinyTag.get(file_path)
         except Exception as e:
-            logger.warning(f"Unsupported file format {file_path}: {e}")
+            logger.error(f"Error while processing: {file_path}: {e}")
             return
 
         artist = audio.artist
