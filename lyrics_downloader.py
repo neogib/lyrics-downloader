@@ -12,6 +12,9 @@ logger = logging.getLogger(__name__)
 class LyricsDownloader:
     def __init__(self):
         self.base_url = "https://lrclib.net/api"
+        self.headers = {
+            "User-Agent": "LyricsDownloader v0.0.1 https://github.com/neogib/lyrics-downloader",
+        }
         self.supported_extensions = TinyTag.SUPPORTED_FILE_EXTENSIONS
         self.proccessed_songs = 0
 
@@ -58,7 +61,9 @@ class LyricsDownloader:
             "album_name": album,
             "duration": int(duration),
         }
-        response = requests.get(f"{self.base_url}/get", params=query_params)
+        response = requests.get(
+            f"{self.base_url}/get", params=query_params, headers=self.headers
+        )
         if response.status_code != 200:
             logger.error(f"Error fetching lyrics: {response.status_code}")
             return None
