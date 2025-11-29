@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 @final
-class LyricsDownloader:
+class LyricsFetcher:
     def __init__(self):
         self.base_url = "https://lrclib.net/api"
         self.headers = {

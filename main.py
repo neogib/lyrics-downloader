@@ -4,7 +4,7 @@ from typing import cast
 
 from rich.logging import RichHandler
 
-from lyrics_downloader import LyricsDownloader
+from lyrics_fetcher import LyricsFetcher
 
 
 def setup_logging():
@@ -28,7 +28,7 @@ def main():
     )
     args = parser.parse_args()
 
-    downloader = LyricsDownloader()
+    downloader = LyricsFetcher()
     downloader.run(cast(list[str], args.paths))
 
 

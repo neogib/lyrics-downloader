@@ -1,4 +1,4 @@
-# Lyrics Downloader
+# Lyrics Fetcher
 
 A simple Python script to automatically download synced lyrics (`.lrc` files) for your local music library. It scans directories for audio files, fetches lyrics from [Lrclib](https://lrclib.net/), and saves them alongside the audio files.
 
