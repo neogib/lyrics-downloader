@@ -59,18 +59,24 @@ class LyricsDownloader:
             "album_name": album,
             "duration": int(duration),
         }
-        response = requests.get(
-            f"{self.base_url}/get", params=query_params, headers=self.headers
-        )
-        if response.status_code != 200:
-            logger.error(f"Error fetching lyrics: {response.status_code}")
+        try:
+            response = requests.get(
+                f"{self.base_url}/get", params=query_params, headers=self.headers
+            )
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            logger.error(f"HTTP error while fetching lyrics: {e}")
+            return None
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Request error while fetching lyrics: {e}")
             return None
 
         data = response.json()  # pyright: ignore[reportAny]
         synced_lyrics: str = data.get("syncedLyrics", [])  # pyright: ignore[reportAny]
         if not synced_lyrics:
-            logger.info("No synced lyrics found.")
+            logger.warning("No synced lyrics found.")
             return None
+        logger.info("Synced lyrics fetched successfully.")
         return synced_lyrics
 
     def save_lyrics(
@@ -93,3 +99,4 @@ class LyricsDownloader:
 
             _ = lrc_file.write(metadata)
             _ = lrc_file.write(synced_lyrics)
+        logger.info(f"Lyrics saved to {file_path.with_suffix('.lrc')}")
